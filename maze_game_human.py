@@ -16,7 +16,7 @@ BLUE = (0, 0, 200)
 
 class MazeGame:
     def __init__(self):
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT + 30))
         pygame.display.set_caption('Maze Game')
         self.clock = pygame.time.Clock()
 
@@ -79,7 +79,16 @@ class MazeGame:
 
     def play(self):
         running = True
+
+        total_time = 10  # Total time limit in seconds
+        start_time = pygame.time.get_ticks()  # Get the initial time
+
         while running:
+
+            current_time = pygame.time.get_ticks()  # Get the current time
+            elapsed_time = (current_time - start_time) // 1000  # Calculate elapsed time in seconds
+            remaining_time = total_time - elapsed_time  # Calculate remaining time
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -115,9 +124,30 @@ class MazeGame:
                 pygame.time.delay(1000)  # Wait for 1 second
                 running = False
 
+
+            # Check if the timer has reached 0 seconds
+            if remaining_time <= 0:
+                print("Time's up! Game over!")
+                # Change background to red
+                for y in range(len(self.maze)):
+                    for x in range(len(self.maze[y])):
+                        if self.maze[y][x] == " ":
+                            pygame.draw.rect(self.screen, RED, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.display.flip()
+                pygame.time.delay(1000)  # Wait for 1 second
+                running = False
+
             self.draw_maze()
             self.draw_goal()
             self.draw_player()
+
+            # Display the remaining time
+            font = pygame.font.Font(None, 36)
+            timer = font.render(f"Time: {remaining_time}", True, BLACK)
+            timer_rect = timer.get_rect()
+            timer_rect.midbottom = (WIDTH // 2, HEIGHT + 26)
+            self.screen.blit(timer, timer_rect)
+
             pygame.display.flip()
             self.clock.tick(10)
 

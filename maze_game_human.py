@@ -73,6 +73,9 @@ class MazeGame:
         if 0 <= new_x < WIDTH // BLOCK_SIZE and 0 <= new_y < HEIGHT // BLOCK_SIZE:
             if self.maze[new_y][new_x] != "#":
                 self.player_pos = (new_x, new_y)
+                return True
+            else:
+                return False
 
     def play(self):
         running = True
@@ -82,13 +85,24 @@ class MazeGame:
                     running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        self.move_player(0, -1)
+                        res = self.move_player(0, -1)
                     elif event.key == pygame.K_DOWN:
-                        self.move_player(0, 1)
+                        res = self.move_player(0, 1)
                     elif event.key == pygame.K_LEFT:
-                        self.move_player(-1, 0)
+                        res = self.move_player(-1, 0)
                     elif event.key == pygame.K_RIGHT:
-                        self.move_player(1, 0)
+                         res = self.move_player(1, 0)
+                
+                    if not res:
+                        print("Game over! You ran into a wall!")
+                        # Change background to red
+                        for y in range(len(self.maze)):
+                            for x in range(len(self.maze[y])):
+                                if self.maze[y][x] == " ":
+                                    pygame.draw.rect(self.screen, RED, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                        pygame.display.flip()
+                        pygame.time.delay(1000)  # Wait for 1 second
+                        running = False
             
             if self.player_pos == self.goal_pos:
                 print("Congratulations! You reached the goal!")
@@ -98,7 +112,7 @@ class MazeGame:
                         if self.maze[y][x] == " ":
                             pygame.draw.rect(self.screen, GREEN, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
                 pygame.display.flip()
-                pygame.time.delay(2000)  # Wait for 2 seconds
+                pygame.time.delay(1000)  # Wait for 1 second
                 running = False
 
             self.draw_maze()

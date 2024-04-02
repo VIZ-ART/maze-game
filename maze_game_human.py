@@ -82,6 +82,7 @@ class MazeGame:
 
         total_time = 10  # Total time limit in seconds
         start_time = pygame.time.get_ticks()  # Get the initial time
+        score = 10
 
         while running:
 
@@ -112,6 +113,7 @@ class MazeGame:
                         pygame.display.flip()
                         pygame.time.delay(1000)  # Wait for 1 second
                         running = False
+                        score = 0
             
             if self.player_pos == self.goal_pos:
                 print("Congratulations! You reached the goal!")
@@ -123,6 +125,8 @@ class MazeGame:
                 pygame.display.flip()
                 pygame.time.delay(1000)  # Wait for 1 second
                 running = False
+                score = remaining_time
+                break
 
 
             # Check if the timer has reached 0 seconds
@@ -135,6 +139,7 @@ class MazeGame:
                             pygame.draw.rect(self.screen, RED, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
                 pygame.display.flip()
                 pygame.time.delay(1000)  # Wait for 1 second
+                score = 0
                 running = False
 
             self.draw_maze()
@@ -150,6 +155,15 @@ class MazeGame:
 
             pygame.display.flip()
             self.clock.tick(10)
+        
+        print("Score =", score)
+        self.screen.fill(WHITE)
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f"Score: {score}", True, BLACK)
+        score_rect = score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        self.screen.blit(score_text, score_rect)
+        pygame.display.flip()
+        pygame.time.delay(2000)
 
 if __name__ == "__main__":
     game = MazeGame()
